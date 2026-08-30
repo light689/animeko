@@ -84,8 +84,9 @@ mockito = "5.12.0"
 mockito-kotlin = "5.4.0"
 sentry-kmp = "0.12.0" # used in plugins, don't remove # https://mvnrepository.com/artifact/io.sentry/sentry-kotlin-multiplatform-gradle-plugin
 sentry-compose-android = "8.23.0" # https://docs.sentry.io/platforms/android/integrations/jetpack-compose/
-gitlive-firebase = "2.3.0"
-google-firebase = "22.0.1"
+gitlive-firebase = "2.2.0" # gitlive 2.3.0 requires firebase bom 33.15.0 (firebase-common 22.x, minSdk 23); 2.2.0 uses bom 33.10.0 (firebase-common 21.0.0, minSdk 21)
+google-firebase-common = "21.0.0" # firebase-common 21.0.0 requires minSdk 21 (22.x requires minSdk 23)
+google-firebase-analytics = "22.3.0" # firebase bom 33.10.0's analytics, minSdk 21
 posthog-android = "3.11.3"
 posthog-java = "1.2.0"
 onnxruntime = "1.20.0" # pinned: 1.21.0+ requires minSdk 24 (Android 5.0/API 21 support)
@@ -345,7 +346,7 @@ haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
 
 firebase-analytics = { module = "dev.gitlive:firebase-analytics", version.ref = "gitlive-firebase" }
-google-firebase-common = { module = "com.google.firebase:firebase-common", version.ref = "google-firebase" }
-google-firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "google-firebase" }
+google-firebase-common = { module = "com.google.firebase:firebase-common", version.ref = "google-firebase-common" }
+google-firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "google-firebase-analytics" }
 posthog-android = { module = "com.posthog:posthog-android", version.ref = "posthog-android" }
 posthog-java = { module = "com.posthog.java:posthog", version.ref = "posthog-java" }
