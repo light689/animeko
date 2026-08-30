@@ -12,7 +12,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-sdk tools:overrideLibrary="org.jetbrains.compose.components.resources,androidx.navigation3.ui,androidx.navigation3.runtime,androidx.compose.material3.adaptive.navigation.suite,androidx.compose.material3.adaptive.navigation" />
+    <uses-sdk tools:overrideLibrary="org.jetbrains.compose.components.resources,androidx.navigation3.ui,androidx.navigation3.runtime,androidx.compose.material3.adaptive.navigationsuite" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
