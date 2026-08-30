@@ -1,0 +1,71 @@
+name: Build OldAnimeko APK (armeabi-v7a, minSdk 21)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  build-apk:
+    name: Build armeabi-v7a APK
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up JDK 21
+        uses: gmitch215/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          accept-android-sdk-licenses: 'true'
+          packages: 'platform-tools platforms;android-37.0 build-tools;36.0.0'
+
+      - name: Write local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" >> local.properties
+          echo "ani.android.abis=armeabi-v7a" >> local.properties
+          echo "android.min.sdk=21" >> local.properties
+          echo "jvm.toolchain.version=21" >> local.properties
+          cat local.properties
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build APK (attempt 1)
+        id: build1
+        timeout-minutes: 180
+        continue-on-error: true
+        run: |
+          ./gradlew :app:android:assembleDefaultDebug --stacktrace \
+            "-Dfile.encoding=UTF-8" \
+            "-Dorg.gradle.jvmargs=-Xmx4g -Dkotlin.daemon.jvm.options=-Xmx4g" \
+            --parallel --no-configuration-cache
+
+      - name: Build APK (attempt 2)
+        timeout-minutes: 180
+        if: ${{ steps.build1.outcome == 'failure' }}
+        run: |
+          ./gradlew :app:android:assembleDefaultDebug --stacktrace \
+            "-Dfile.encoding=UTF-8" \
+            "-Dorg.gradle.jvmargs=-Xmx4g -Dkotlin.daemon.jvm.options=-Xmx4g" \
+            --no-parallel --no-configuration-cache
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: oldanimeko-armeabi-v7a-minSdk21
+          path: app/android/build/outputs/apk/default/debug/*.apk
+          if-no-files-found: error
