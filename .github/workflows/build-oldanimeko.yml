@@ -39,6 +39,15 @@ jobs:
           timeout 300 git clone --depth 1 https://github.com/open-ani/mediamp.git .mediamp || exit 1
           cd .mediamp
           sed -i 's/^androidx-media3 = "1.9.0"/androidx-media3 = "1.3.1"/' gradle/libs.versions.toml
+          # AudioProcessor.flush(StreamMetadata) was added in media3 1.9, not present in 1.3.1.
+          # Drop the parameter so mediamp compiles against media3 1.3.1 (minSdk 21).
+          sed -i 's/fun flush(streamMetadata: AudioProcessor\.StreamMetadata)/fun flush()/g' \
+            mediamp-exoplayer/src/androidMain/kotlin/internal/FallbackTimeStretchAudioProcessor.kt \
+            mediamp-exoplayer/src/androidMain/kotlin/internal/WsolaAudioProcessor.kt \
+            mediamp-exoplayer/src/androidMain/kotlin/internal/WsolaAudioProcessorChain.kt
+          sed -i 's/\.flush(streamMetadata)/.flush()/g' \
+            mediamp-exoplayer/src/androidMain/kotlin/internal/FallbackTimeStretchAudioProcessor.kt \
+            mediamp-exoplayer/src/androidMain/kotlin/internal/WsolaAudioProcessorChain.kt
           grep -n "androidx-media3" gradle/libs.versions.toml | head -3
 
       - name: Write local.properties
